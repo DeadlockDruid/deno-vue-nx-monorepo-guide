@@ -1248,6 +1248,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@deno-vue/users@workspace:libs/shared/zod-schemas/users":
+  version: 0.0.0-use.local
+  resolution: "@deno-vue/users@workspace:libs/shared/zod-schemas/users"
+  languageName: unknown
+  linkType: soft
+
 "@deno-vue/vue-app-1@workspace:apps/frontend/vue-app-1":
   version: 0.0.0-use.local
   resolution: "@deno-vue/vue-app-1@workspace:apps/frontend/vue-app-1"

@@ -1,90 +1,243 @@
-# DenoVue
+# Guide to Setting Up an NX Monorepo with Deno and Vue Apps
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+### Setup NX Workspace
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+1. Initialize the workspace
+   Create a simple NX workspace with basic JS/TS support:
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Finish your CI setup
-
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/I87Q7DWCX9)
-
-
-## Generate a library
-
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+```bash
+yarn create nx-workspace@latest --packageManager yarn
 ```
 
-## Run tasks
+2. Update package.json
 
-To build the library use:
-
-```sh
-npx nx build pkg1
-```
-
-To run any task with Nx use:
-
-```sh
-npx nx <target> <project-name>
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
+Ensure the root package.json includes the following configuration:
 
 ```
-npx nx release
+{
+  "name": "@deno-vue/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "20.3.0",
+    "prettier": "^2.6.2",
+    "typescript": "~5.6.2",
+    "nx": "20.3.0"
+  },
+  "workspaces": [
+    "apps/**",
+    "libs/**",
+    "packages/**"
+  ],
+  "packageManager": "yarn@4.6.0"
+}
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+3. Create apps and libs folders
 
-[Learn more about Nx release &raquo;](hhttps://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Follow NX conventions by creating the following directories:
 
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+```
+mkdir apps libs
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+### Creating Deno Apps
 
-```sh
-npx nx sync:check
+1. Generate Deno projects using Hono
+
+Since NX doesn’t have a generator for Deno apps, manually create them by moving into the apps/backend directory first:
+
+```
+mkdir apps/backend
+cd apps/backend
+deno run -A npm:create-hono@latest
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+2. Set up apps/backend/deno.json
 
+Create a shared deno.json file in apps/backend/:
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```
+{
+  "workspace": ["./deno-app-1", "./deno-app-2"],
+  "importMap": "./shared_import_map.json",
+  "tasks": {
+    "lint": "deno lint",
+    "fmt": "deno fmt"
+  }
+}
+```
 
-## Install Nx Console
+- workspace: Lists the Deno projects to share configurations.
+- importMap: Defines shared libraries for all Deno apps.
+- tasks: Common Deno tasks (e.g., linting, formatting) across all projects.
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+3. Add project.json for each Deno app
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Manually configure each Deno app with project.json. Example for deno-app-1:
 
-## Useful links
+```
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "deno-app-1",
+  "projectType": "application",
+  "sourceRoot": "apps/backend/deno-app-1",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "deno task start",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "deno lint --config {projectRoot}/deno.json"
+      },
+      "inputs": ["default"],
+      "cache": true
+    },
+    "compile": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "deno compile --config {projectRoot}/deno.json --output {projectRoot}/dist/deno-app-1 {projectRoot}/main.ts"
+      },
+      "outputs": ["{projectRoot}/dist"],
+      "inputs": ["production", "^production"],
+      "cache": true
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "deno test --config {projectRoot}/deno.json --coverage={projectRoot}/coverage/ --permit-no-files"
+      },
+      "inputs": ["default"],
+      "cache": true
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash {projectRoot}/scripts/deploy-app.sh"
+      },
+      "dependsOn": ["compile"],
+      "inputs": ["production"]
+    }
+  },
+  "tags": ["scope:backend", "type:deno"]
+}
+```
 
-Learn more:
+Explanation of Keys:
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- targets: Defines various actions (e.g., serve, lint, compile) for the app.
+- serve: Runs the Deno server using the start task defined in deno.json.
+- lint: Lints the code using Deno’s built-in linter.
+- compile: Compiles the Deno app into a standalone binary.
+- test: Runs tests with coverage reports.
+- deploy: Executes a deployment script after compiling the app.
+- tags: Used to categorize the project (e.g., backend, Deno).
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+---
+
+### Adding Vue Apps
+
+1. Add Vue generator plugin
+
+Install the Vue plugin for NX:
+
+`yarn nx add @nx/vue`
+
+2. Generate a Vue app
+
+Create a Vue app under apps/frontend/:
+
+`yarn nx g @nx/vue:app apps/frontend/vue-app-1`
+
+3. Ensure path aliases
+
+Add path aliases to vite.config.ts for shared libraries:
+
+```
+resolve: {
+  alias: {
+    '@shared': path.resolve(__dirname, '../../../libs/shared')
+  }
+}
+```
+
+---
+
+### Code Sharing via Libraries
+
+1. Generate shared library for Zod schemas
+
+Use NX to create a library for shared Zod schemas:
+
+`yarn nx generate @nx/js:library users --directory=libs/shared/zod-schemas`
+
+2. Update imports for Deno compatibility
+
+Ensure exports in index.ts have .ts extensions for Deno compatibility:
+
+`export * from './lib/users.ts';`
+
+3. Add shared library paths in tsconfig.base.json
+
+Update tsconfig.base.json to include paths for shared libraries:
+
+```
+"paths": {
+  "@shared/*": ["libs/shared/*"]
+}
+```
+
+---
+
+### Configuring NX for Efficient Builds
+
+1. Configure .nxignore
+
+Ignore irrelevant files to speed up builds by adding them to .nxignore:
+
+```
+**/.vscode
+```
+
+2. Update nx.json with default ignored inputs
+
+Add "default" ignored inputs to nx.json:
+
+```
+"!{projectRoot}/scripts/**/*",
+"!{projectRoot}/**/*.md",
+"!{projectRoot}/**/*.{png,jpg,jpeg,gif,svg,ico,json,txt}",
+"!{projectRoot}/.editorconfig",
+"!{projectRoot}/.prettierrc",
+"!{projectRoot}/.prettierignore",
+"!{projectRoot}/.vscode/**/*",
+"!{projectRoot}/coverage/**/*",
+"!{projectRoot}/**/*.log",
+"!{projectRoot}/.cache/**/*",
+"!{projectRoot}/dist/**/*",
+"!{projectRoot}/build/**/*"
+```
+
+3. Run NX affected commands
+
+Use the following command to lint, build, test, and compile only affected projects:
+
+```
+yarn nx affected --targets=lint,build,test,compile
+```
+
+4. Run NX Affected Deploy commands after linting & testing:
+
+```
+yarn nx affected --targets=deploy
+```
+
+### Summary
+
+## This guide walks through setting up an NX monorepo with Deno and Vue apps. It includes manually configuring Deno apps, generating Vue apps, sharing code via NX libraries, and optimizing builds using NX’s powerful affected commands.

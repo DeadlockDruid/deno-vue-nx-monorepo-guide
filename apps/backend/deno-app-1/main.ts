@@ -28,5 +28,8 @@ app.post('/submit', async (c) => {
   }
 });
 
-// Start the server
-Deno.serve(app.fetch);
+// Automatically extract port from Deno.args or use default
+const port = parseInt(Deno.env.get('PORT') ?? '8000');
+
+// Start the server with Deno.serve
+Deno.serve({ port }, app.fetch);

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "name": "deno-app-1",
   "projectType": "application",
   "sourceRoot": "apps/backend/deno-app-1",
