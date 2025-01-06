@@ -1,0 +1,10 @@
+{
+  "name": "@deno-vue/vue-app-1",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "vue-app-1",
+    "projectType": "application",
+    "sourceRoot": "apps/frontend/vue-app-1/src"
+  }
+}

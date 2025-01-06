@@ -1,0 +1,13 @@
+{
+  "name": "@deno-vue/users",
+  "version": "0.0.1",
+  "dependencies": {},
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "private": true,
+  "nx": {
+    "sourceRoot": "libs/shared/zod-schemas/users/src",
+    "projectType": "library",
+    "name": "users"
+  }
+}

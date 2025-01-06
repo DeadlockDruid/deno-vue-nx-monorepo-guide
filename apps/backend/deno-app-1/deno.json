@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "start": "deno run --allow-net main.ts"
+  },
+  "imports": {
+    "lodash": "npm:lodash@^4.17.21",
+    "@shared/zod-schemas/users": "../../../libs/shared/zod-schemas/users/src/index.ts"
+  }
+}
