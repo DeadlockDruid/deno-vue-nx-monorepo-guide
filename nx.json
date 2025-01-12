@@ -58,5 +58,8 @@
       }
     }
   ],
-  "useNxCloud": false
+  "useNxCloud": false,
+  "sync": {
+    "applyChanges": true
+  }
 }

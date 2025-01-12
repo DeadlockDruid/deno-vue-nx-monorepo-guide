@@ -11,6 +11,15 @@
     },
     {
       "path": "./libs/shared/zod-schemas/users"
+    },
+    {
+      "path": "./apps/backend/deno-app-1"
+    },
+    {
+      "path": "./apps/backend/deno-app-2"
+    },
+    {
+      "path": "./apps/backend/deno-app-3"
     }
   ]
 }

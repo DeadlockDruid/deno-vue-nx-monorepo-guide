@@ -3,5 +3,10 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": []
+  "include": [],
+  "references": [
+    {
+      "path": "../../../libs/shared/zod-schemas/users"
+    }
+  ]
 }
