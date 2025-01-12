@@ -65,6 +65,11 @@ jobs:
           swa --version || true
           swa deploy --help || true
 
+      # Pre-download StaticSitesClient binary
+      - name: Pre-download StaticSitesClient binary
+        run: |
+          swa deploy --dry-run --deployment-token=placeholder || true
+
       # Deploy affected projects only if previous steps succeed
       - name: Deploy Affected Projects
         if: success()
