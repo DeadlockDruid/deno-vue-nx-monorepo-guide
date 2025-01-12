@@ -63,7 +63,7 @@ jobs:
         run: |
           npm install -g @azure/static-web-apps-cli
 
-      # Pre-download StaticSitesClient binary
+      # Pre-download StaticSitesClient binary, this will always fail but won't affect further steps.
       - name: Dry running to ensure StaticSitesClient binary is downloaded before actual deployment triggers to avoid failures
         run: |
           swa deploy --dry-run --deployment-token=${{ secrets.DEPLOY_TOKEN_VUE_APP_1 }} || true
