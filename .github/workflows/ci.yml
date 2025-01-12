@@ -36,7 +36,7 @@ jobs:
           DENO_DIR: ~/.cache/deno
         with:
           path: ~/.cache/deno
-          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.json', '**/deno.lock') }}
 
       # Cache node_modules
       - uses: actions/setup-node@v4
@@ -57,6 +57,10 @@ jobs:
       - name: Lint, Test, and Build Affected Projects
         run: |
           yarn nx affected --targets=lint,test,build --verbose
+
+      # Install Azure Static Web Apps CLI
+      - name: Install SWA CLI
+        run: npm install -g @azure/static-web-apps-cli
 
       # Deploy affected projects only if previous steps succeed
       - name: Deploy Affected Projects
