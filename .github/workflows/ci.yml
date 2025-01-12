@@ -60,7 +60,10 @@ jobs:
 
       # Install Azure Static Web Apps CLI
       - name: Install SWA CLI
-        run: npm install -g @azure/static-web-apps-cli
+        run: |
+          npm install -g @azure/static-web-apps-cli
+          swa --version || true
+          swa deploy --help || true
 
       # Deploy affected projects only if previous steps succeed
       - name: Deploy Affected Projects
