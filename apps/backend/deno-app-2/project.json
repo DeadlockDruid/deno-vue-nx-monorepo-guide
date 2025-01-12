@@ -35,14 +35,6 @@
       },
       "inputs": ["default"],
       "cache": true
-    },
-    "deploy": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "bash {projectRoot}/scripts/deploy-app.sh"
-      },
-      "dependsOn": ["compile"],
-      "inputs": ["production"]
     }
   },
   "tags": ["scope:backend", "type:deno"]

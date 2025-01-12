@@ -5,6 +5,18 @@
   "nx": {
     "name": "vue-app-2",
     "projectType": "application",
-    "sourceRoot": "apps/frontend/vue-app-2/src"
+    "sourceRoot": "apps/frontend/vue-app-2/src",
+    "targets": {
+      "deploy": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          "^build"
+        ],
+        "options": {
+          "command": "swa deploy --config swa-cli.config.json --deployment-token=$DEPLOY_TOKEN_VUE_APP_2",
+          "cwd": "{projectRoot}"
+        }
+      }
+    }
   }
 }
