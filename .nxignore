@@ -1,2 +1,5 @@
 # Ignore all .vscode directories in the workspace
 **/.vscode
+
+# Ignore github ci configuration changes
+.github/workflows/**
