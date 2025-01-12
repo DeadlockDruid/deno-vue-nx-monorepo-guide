@@ -24,9 +24,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      # This enables task distribution via Nx Cloud
-      # Uncomment if needed
-      # - run: yarn dlx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="build"
+      # Install required Deno version
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: 2.1.4
+
+      # Cache Deno dependencies
+      - name: Cache Deno Dependencies
+        uses: actions/cache@v4
+        env:
+          DENO_DIR: ~/.cache/deno
+        with:
+          path: ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
 
       # Cache node_modules
       - uses: actions/setup-node@v4
