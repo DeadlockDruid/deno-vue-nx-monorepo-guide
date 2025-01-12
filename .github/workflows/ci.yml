@@ -45,7 +45,16 @@ jobs:
           cache: 'yarn'
 
       - run: yarn install --immutable
-      - uses: nrwl/nx-set-shas@v4
+
+      # Set NX_BASE and NX_HEAD dynamically using nrwl/nx-set-shas
+      - name: Set NX_BASE and NX_HEAD for nx affected commands
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: 'main'
+
+      - run: |
+          echo "NX_BASE=${{ env.NX_BASE }}"
+          echo "NX_HEAD=${{ env.NX_HEAD }}"
 
       # Show affected projects for easier debugging and monitoring
       - name: Show Affected Projects
