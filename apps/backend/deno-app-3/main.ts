@@ -7,7 +7,7 @@ app.get('/', (c) => {
 });
 
 // Automatically extract port from Deno.args or use default
-const port = parseInt(Deno.env.get('PORT') ?? '8000');
+const port = parseInt(Deno.env.get('PORT') ?? '8080');
 
 // Start the server with Deno.serve
 Deno.serve({ port }, app.fetch);

@@ -6,7 +6,6 @@
       "sharedGlobals",
       "!{projectRoot}/scripts/**/*",
       "!{projectRoot}/**/*.md",
-      "!{projectRoot}/**/*.{png,jpg,jpeg,gif,svg,ico,json,txt}",
       "!{projectRoot}/.editorconfig",
       "!{projectRoot}/.prettierrc",
       "!{projectRoot}/.prettierignore",

@@ -1,6 +1,7 @@
 {
   "imports": {
     "hono": "jsr:@hono/hono@^4.6.15",
+    "hono/cors": "jsr:@hono/hono@^4.6.15/cors",
     "zod": "https://deno.land/x/zod@v3.24.1/mod.ts"
   }
 }

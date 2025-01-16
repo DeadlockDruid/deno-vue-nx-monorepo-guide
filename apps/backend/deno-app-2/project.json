@@ -22,19 +22,30 @@
     "compile": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "deno compile --config {projectRoot}/deno.json --output {projectRoot}/dist/deno-app-2 {projectRoot}/main.ts"
+        "command": "bash ../shared-scripts/compile_deno.sh --workspace-import-map ../shared_import_map.json --project-import-map ./deno.json --output-dir ./dist --main-file ./main.ts",
+        "cwd": "{projectRoot}"
       },
-      "outputs": ["{projectRoot}/dist"],
+      "outputs": ["{projectRoot}/dist/deno-app"],
       "inputs": ["production", "^production"],
       "cache": true
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "deno test --config {projectRoot}/deno.json --coverage={projectRoot}/coverage/ --permit-no-files"
+        "command": "deno test --config deno.json --coverage=coverage/ --permit-no-files",
+        "cwd": "{projectRoot}"
       },
       "inputs": ["default"],
       "cache": true
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash ../shared-scripts/deploy_deno.sh --resource-group mvpsso --web-app-name deno-app-2",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["production", "^production"],
+      "dependsOn": ["compile"]
     }
   },
   "tags": ["scope:backend", "type:deno"]
