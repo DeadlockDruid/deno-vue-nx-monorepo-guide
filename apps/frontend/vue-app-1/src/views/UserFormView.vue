@@ -4,16 +4,35 @@
     <form @submit.prevent="submitForm">
       <div>
         <label for="name">Name:</label>
-        <input v-model="user.name" id="name" type="text" required />
+        <input
+          id="name"
+          v-model="user.name"
+          type="text"
+          required
+        >
       </div>
       <div>
         <label for="email">Email:</label>
-        <input v-model="user.email" id="email" type="email" required />
+        <input
+          id="email"
+          v-model="user.email"
+          type="email"
+          required
+        >
       </div>
-      <button type="submit">Submit</button>
+      <button type="submit">
+        Submit
+      </button>
     </form>
-    <p v-if="message">{{ message }}</p>
-    <p v-if="error" style="color: red">{{ error }}</p>
+    <p v-if="message">
+      {{ message }}
+    </p>
+    <p
+      v-if="error"
+      style="color: red"
+    >
+      {{ error }}
+    </p>
   </div>
 </template>
 <script lang="ts">
