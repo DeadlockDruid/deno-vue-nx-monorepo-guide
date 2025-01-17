@@ -52,7 +52,7 @@ export default {
         userSchema.parse(user.value);
 
         const response = await axios.post(
-          'http://localhost:8000/submit',
+          `${process.env.VITE_API_BASE_URL}/submit`,
           user.value
         );
         message.value = response.data.message;

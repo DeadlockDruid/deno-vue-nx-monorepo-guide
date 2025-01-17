@@ -43,4 +43,9 @@ export default defineConfig({
       provider: 'v8',
     },
   },
+  define: {
+    'process.env': {
+      VITE_API_BASE_URL: 'http://deno-app-1-avanfrewhaebbraw.canadacentral-01.azurewebsites.net',
+    },
+  },
 });
