@@ -16,9 +16,7 @@
       "options": {
         "command": "deno lint --config {projectRoot}/deno.json"
       },
-      "inputs": [
-        "default"
-      ],
+      "inputs": ["default"],
       "cache": true
     },
     "compile": {
@@ -27,13 +25,8 @@
         "command": "bash ../shared-scripts/compile_deno.sh --workspace-import-map ../shared_import_map.json --project-import-map ./deno.json --output-dir ./dist --main-file ./main.ts",
         "cwd": "{projectRoot}"
       },
-      "outputs": [
-        "{projectRoot}/dist/deno-app"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
+      "outputs": ["{projectRoot}/dist/deno-app"],
+      "inputs": ["production", "^production"],
       "cache": true
     },
     "test": {
@@ -42,28 +35,9 @@
         "command": "deno test --config deno.json --coverage=coverage/ --permit-no-files",
         "cwd": "{projectRoot}"
       },
-      "inputs": [
-        "default"
-      ],
+      "inputs": ["default"],
       "cache": true
-    },
-    "deploy": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "bash ../shared-scripts/deploy_deno.sh --resource-group mvpsso --web-app-name deno-app-3",
-        "cwd": "{projectRoot}"
-      },
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "dependsOn": [
-        "compile"
-      ]
     }
   },
-  "tags": [
-    "scope:backend",
-    "type:deno"
-  ]
+  "tags": ["scope:backend", "type:deno"]
 }

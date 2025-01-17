@@ -56,7 +56,8 @@ echo "Deploying to Azure Web App Service..."
 az webapp deploy \
   --resource-group "$RESOURCE_GROUP" \
   --name "$WEB_APP_NAME" \
-  --src-path "$ZIP_FILE_PATH"
+  --src-path "$ZIP_FILE_PATH" \
+  --interval 10
 
 echo "Deployment completed successfully."
 
