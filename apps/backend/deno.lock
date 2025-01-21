@@ -3,7 +3,6 @@
   "specifiers": {
     "jsr:@hono/hono@^4.6.15": "4.6.15",
     "npm:create-hono@latest": "0.14.3",
-    "npm:hono@^4.6.16": "4.6.16",
     "npm:lodash@^4.17.21": "4.17.21"
   },
   "jsr": {
@@ -14,9 +13,6 @@
   "npm": {
     "create-hono@0.14.3": {
       "integrity": "sha512-CuZJAj6dmqAwmTdPM5iFl5vQAD5at6aBKnEaiP5zUYNuiInMtalSXDrMj79lmcdJD/hXNsQf14upMx2se7ZVxA=="
-    },
-    "hono@4.6.16": {
-      "integrity": "sha512-iE6xOPwDYlfnZFwk6BfIMMIH4WZm3pPhz6rc1uJM/OPew0pjG5K6p8WTLaMBY1/szF/T0TaEjprMpwn16BA0NQ=="
     },
     "lodash@4.17.21": {
       "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
@@ -45,11 +41,6 @@
       "deno-app-1": {
         "dependencies": [
           "npm:lodash@^4.17.21"
-        ]
-      },
-      "deno-app-2": {
-        "dependencies": [
-          "npm:hono@^4.6.16"
         ]
       }
     }

@@ -1,4 +1,4 @@
-name: CI
+name: CI with Pnpm
 
 on:
   push:
@@ -19,11 +19,17 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
+      # Checkout repository
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -43,13 +49,22 @@ jobs:
           path: ~/.cache/deno
           key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.json', '**/deno.lock') }}
 
-      # Cache node_modules
-      - uses: actions/setup-node@v4
+      # Install pnpm using pnpm/action-setup
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 20
-          cache: 'yarn'
+          version: 10.0.0
 
-      - run: yarn install --immutable
+      # Set up Node.js with caching for pnpm
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      # Install dependencies with pnpm
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
 
       # Set NX_BASE and NX_HEAD dynamically using nrwl/nx-set-shas
       - name: Set NX_BASE and NX_HEAD for nx affected commands
@@ -61,16 +76,15 @@ jobs:
           echo "NX_BASE=${{ env.NX_BASE }}"
           echo "NX_HEAD=${{ env.NX_HEAD }}"
 
-      # Show affected projects for easier debugging and monitoring
+      # Debugging and monitoring affected projects
       - name: Show Affected Projects
         run: |
-          echo "Fetching affected projects..."
-          yarn nx show projects --affected
+          pnpm nx show projects --affected
 
-      # Run lint, test, and build for affected projects
+      # Lint, Test, and Build affected projects
       - name: Lint, Test, and Build Affected Projects
         run: |
-          yarn nx affected --targets=lint,test,build --verbose
+          pnpm nx affected --targets=lint,test,build,fmt --verbose
 
       # Install Azure Static Web Apps CLI
       - name: Install SWA CLI
@@ -89,4 +103,4 @@ jobs:
           DEPLOY_TOKEN_VUE_APP_1: ${{ secrets.DEPLOY_TOKEN_VUE_APP_1 }}
           DEPLOY_TOKEN_VUE_APP_2: ${{ secrets.DEPLOY_TOKEN_VUE_APP_2 }}
         run: |
-          yarn nx affected --targets=deploy --verbose
+          pnpm nx affected --targets=deploy --verbose
