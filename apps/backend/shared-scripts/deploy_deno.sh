@@ -11,7 +11,7 @@ set -o pipefail # Fail the script if any pipeline step fails
 # Initialize variables
 RESOURCE_GROUP=""
 WEB_APP_NAME=""
-OUTPUT_BINARY="dist/deno-app"
+OUTPUT_BINARY="dist/bundle.js"
 ZIP_FILE_PATH=""
 
 # Function to display usage

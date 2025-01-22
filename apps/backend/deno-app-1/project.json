@@ -16,24 +16,17 @@
       "options": {
         "command": "deno lint --config {projectRoot}/deno.json"
       },
-      "inputs": [
-        "default"
-      ],
+      "inputs": ["default"],
       "cache": true
     },
-    "compile": {
+    "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "bash ../shared-scripts/compile_deno.sh --workspace-import-map ../shared_import_map.json --project-import-map ./deno.json --output-dir ./dist --main-file ./main.ts",
+        "command": "bash ../shared-scripts/build_esbuild.sh --workspace-import-map ../shared_import_map.json --project-import-map ./deno.json --output-dir ./dist --main-file ./main.ts",
         "cwd": "{projectRoot}"
       },
-      "outputs": [
-        "{projectRoot}/dist/deno-app"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
+      "outputs": ["{projectRoot}/dist/bundle.js"],
+      "inputs": ["production", "^production"],
       "cache": true
     },
     "test": {
@@ -42,9 +35,7 @@
         "command": "deno test --config deno.json --coverage=coverage/ --permit-no-files",
         "cwd": "{projectRoot}"
       },
-      "inputs": [
-        "default"
-      ],
+      "inputs": ["default"],
       "cache": true
     },
     "deploy": {
@@ -53,17 +44,9 @@
         "command": "bash ../shared-scripts/deploy_deno.sh --resource-group mvpsso --web-app-name deno-app-1",
         "cwd": "{projectRoot}"
       },
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "dependsOn": [
-        "compile"
-      ]
+      "inputs": ["production", "^production"],
+      "dependsOn": ["build"]
     }
   },
-  "tags": [
-    "scope:backend",
-    "type:deno"
-  ]
+  "tags": ["scope:backend", "type:deno"]
 }

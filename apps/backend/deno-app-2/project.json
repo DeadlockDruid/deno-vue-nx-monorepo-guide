@@ -19,13 +19,13 @@
       "inputs": ["default"],
       "cache": true
     },
-    "compile": {
+    "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "bash ../shared-scripts/compile_deno.sh --workspace-import-map ../shared_import_map.json --project-import-map ./deno.json --output-dir ./dist --main-file ./main.ts",
+        "command": "bash ../shared-scripts/build_esbuild.sh --workspace-import-map ../shared_import_map.json --project-import-map ./deno.json --output-dir ./dist --main-file ./main.ts",
         "cwd": "{projectRoot}"
       },
-      "outputs": ["{projectRoot}/dist/deno-app"],
+      "outputs": ["{projectRoot}/dist/bundle.js"],
       "inputs": ["production", "^production"],
       "cache": true
     },
@@ -45,7 +45,7 @@
         "cwd": "{projectRoot}"
       },
       "inputs": ["production", "^production"],
-      "dependsOn": ["compile"]
+      "dependsOn": ["build"]
     }
   },
   "tags": ["scope:backend", "type:deno"]

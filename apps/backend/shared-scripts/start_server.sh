@@ -13,6 +13,17 @@ if ! command -v jq &>/dev/null; then
   source ~/.bashrc
 fi
 
+# Check if Deno is installed, and install it if missing
+if ! command -v deno &>/dev/null; then
+  echo "Deno is not installed. Installing Deno..."
+  curl -fsSL https://deno.land/install.sh | sh
+  export PATH="$HOME/.deno/bin:$PATH"
+  echo 'export PATH="$HOME/.deno/bin:$PATH"' >>~/.bashrc
+  source ~/.bashrc
+else
+  echo "Deno is already installed."
+fi
+
 KEY_VAULT_NAME="my-apps"
 
 # Ensure required environment variables are set
@@ -82,15 +93,15 @@ fetch_all_secrets_with_values
 
 # Define paths and configurations
 APP_DIR="/home/site/wwwroot"
-BINARY_NAME="deno-app"
+BUNDLE_FILE="bundle.js"
 
 echo "Starting the Deno app on port ${PORT}..."
 
 # Ensure the compiled binary exists
-if [ ! -f "${APP_DIR}/${BINARY_NAME}" ]; then
-  echo "Error: Compiled Deno binary '${APP_DIR}/${BINARY_NAME}' not found."
+if [ ! -f "${APP_DIR}/${BUNDLE_FILE}" ]; then
+  echo "Error: Compiled Deno binary '${APP_DIR}/${BUNDLE_FILE}' not found."
   exit 1
 fi
 
 # Start the Deno app
-"${APP_DIR}/${BINARY_NAME}" --allow-net --allow-env
+deno run --allow-net --allow-env --allow-sys "${APP_DIR}/${BUNDLE_FILE}"
