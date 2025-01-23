@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const userSchema = z
   .object({
-    name: z.string().min(5, 'Name should have minimum of three characters.'),
+    name: z.string().min(3, 'Name should have minimum of three characters.'),
     email: z.string().email('Invalid email'),
   })
   .strict();
