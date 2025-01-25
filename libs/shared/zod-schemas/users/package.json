@@ -7,6 +7,18 @@
   "nx": {
     "sourceRoot": "libs/shared/zod-schemas/users/src",
     "projectType": "library",
-    "name": "users"
+    "name": "users",
+    "targets": {
+      "sonar": {
+        "executor": "nx:run-commands",
+        "inputs": [
+          "production"
+        ],
+        "options": {
+          "command": "sonar-scanner -Dsonar.projectKey=LIB-USERS -Dsonar.projectName=LIB-USERS -Dsonar.organization=divyanshu-startup -Dsonar.sources=./src -Dsonar.tests=./src/tests -Dsonar.test.inclusions=**/*.spec.ts -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_LIB_USERS",
+          "cwd": "{projectRoot}"
+        }
+      }
+    }
   }
 }

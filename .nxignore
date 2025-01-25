@@ -3,3 +3,7 @@
 
 # Ignore github ci configuration changes
 .github/workflows/**
+
+# Ignore sonar scanner directories
+**/.scannerwork/
+.sonar

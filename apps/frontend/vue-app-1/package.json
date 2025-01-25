@@ -9,11 +9,18 @@
     "targets": {
       "deploy": {
         "executor": "nx:run-commands",
-        "dependsOn": [
-          "^build"
-        ],
         "options": {
           "command": "swa deploy --config swa-cli.config.json --deployment-token=$DEPLOY_TOKEN_VUE_APP_1",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "sonar": {
+        "executor": "nx:run-commands",
+        "inputs": [
+          "production"
+        ],
+        "options": {
+          "command": "sonar-scanner -Dsonar.projectKey=VUE-APP-1 -Dsonar.projectName=VUE-APP-1 -Dsonar.organization=divyanshu-startup -Dsonar.sources=./src -Dsonar.tests=./src/tests -Dsonar.test.inclusions=**/*.spec.ts -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_VUE_APP_1",
           "cwd": "{projectRoot}"
         }
       }

@@ -44,8 +44,7 @@
         "command": "bash ../shared-scripts/deploy_deno.sh --resource-group mvpsso --web-app-name deno-app-1",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["production", "^production"],
-      "dependsOn": ["build"]
+      "inputs": ["production", "^production"]
     }
   },
   "tags": ["scope:backend", "type:deno"]

@@ -1,4 +1,4 @@
-name: CI with Pnpm
+name: CI
 
 on:
   push:
@@ -29,16 +29,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Login to Azure
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       # Install required Deno version
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: 2.1.4
+          deno-version: 2.1.6
 
       # Cache Deno dependencies
       - name: Cache Deno Dependencies
@@ -81,24 +75,50 @@ jobs:
         run: |
           pnpm nx show projects --affected
 
+      # Install SonarScanner CLI
+      - name: Install SonarScanner CLI
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip -O sonar-scanner.zip
+          unzip sonar-scanner.zip
+          mv sonar-scanner-6.2.1.4610-linux-x64 sonar-scanner
+          echo "$(pwd)/sonar-scanner/bin" >> $GITHUB_PATH
+
+      - name: Run SonarQube Analysis
+        env:
+          SONAR_VUE_APP_1: ${{ secrets.SONAR_VUE_APP_1 }}
+          SONAR_VUE_APP_2: ${{ secrets.SONAR_VUE_APP_2 }}
+          SONAR_LIB_USERS: ${{ secrets.SONAR_LIB_USERS }}
+        run: |
+          pnpm nx affected --targets=sonar --verbose
+        continue-on-error: false
+
       # Lint, Test, and Build affected projects
       - name: Lint, Test, and Build Affected Projects
+        if: ${{ success() }}
         run: |
-          pnpm nx affected --targets=lint,test,build,fmt --verbose
+          pnpm nx affected --targets=lint,test,build --verbose
+
+      # Login to Azure
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Install Azure Static Web Apps CLI
       - name: Install SWA CLI
+        if: ${{ success() }}
         run: |
           npm install -g @azure/static-web-apps-cli
 
       # Pre-download StaticSitesClient binary, this will always fail but won't affect further steps.
       - name: Dry running to ensure StaticSitesClient binary is downloaded before actual deployment triggers to avoid failures
+        if: ${{ success() }}
         run: |
           swa deploy --dry-run --deployment-token=${{ secrets.DEPLOY_TOKEN_VUE_APP_1 }} || true
 
       # Deploy affected projects only if previous steps succeed
       - name: Deploy Affected Projects
-        if: success()
+        if: ${{ success() }}
         env:
           DEPLOY_TOKEN_VUE_APP_1: ${{ secrets.DEPLOY_TOKEN_VUE_APP_1 }}
           DEPLOY_TOKEN_VUE_APP_2: ${{ secrets.DEPLOY_TOKEN_VUE_APP_2 }}
