@@ -7,3 +7,6 @@
 # Ignore sonar scanner directories
 **/.scannerwork/
 .sonar
+
+# Ignore codeql-database
+**/codeql-database/

@@ -15,6 +15,7 @@ on:
 permissions:
   actions: read
   contents: read
+  security-events: write
 
 jobs:
   main:
@@ -83,6 +84,27 @@ jobs:
           mv sonar-scanner-6.2.1.4610-linux-x64 sonar-scanner
           echo "$(pwd)/sonar-scanner/bin" >> $GITHUB_PATH
 
+      # Install CodeQL CLI
+      - name: Install CodeQL CLI
+        run: |
+          wget https://github.com/github/codeql-action/releases/latest/download/codeql-bundle-linux64.tar.gz -O codeql-bundle.tar.gz
+          tar -xzf codeql-bundle.tar.gz -C /opt/
+          rm codeql-bundle.tar.gz
+          echo "/opt/codeql" >> $GITHUB_PATH
+
+      # Run CodeQL Analysis
+      - name: Run CodeQL Analysis
+        run: pnpm nx affected --targets=codeql-analyze --verbose
+        continue-on-error: false
+
+      # Upload CodeQL Results
+      - name: Upload CodeQL Results
+        run: pnpm nx affected --targets=codeql-upload-result --verbose
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
+
+      # Run SonarQube Analysis
       - name: Run SonarQube Analysis
         env:
           SONAR_VUE_APP_1: ${{ secrets.SONAR_VUE_APP_1 }}

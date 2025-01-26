@@ -15,7 +15,24 @@
           "production"
         ],
         "options": {
-          "command": "sonar-scanner -Dsonar.projectKey=LIB-USERS -Dsonar.projectName=LIB-USERS -Dsonar.organization=divyanshu-startup -Dsonar.sources=./src -Dsonar.tests=./src/tests -Dsonar.test.inclusions=**/*.spec.ts -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_LIB_USERS",
+          "command": "sonar-scanner -Dsonar.projectKey=LIB-USERS -Dsonar.projectName=LIB-USERS -Dsonar.organization=divyanshu-startup -Dsonar.sources=./src -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_LIB_USERS",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "codeql-analyze": {
+        "executor": "nx:run-commands",
+        "inputs": [
+          "production"
+        ],
+        "options": {
+          "command": "codeql database create ./codeql-database --language=javascript-typescript --source-root=. --overwrite && codeql database analyze ./codeql-database codeql/javascript-queries:codeql-suites/javascript-code-scanning.qls --format=sarif-latest --output=./codeql-database/lib-users.sarif --sarif-category=lib-users --threads=0 --sarif-add-baseline-file-info --verbose",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "codeql-upload-result": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "codeql github upload-results --sarif=./codeql-database/lib-users.sarif --github-url=https://github.com/ --repository=${GITHUB_REPOSITORY} --ref=${GITHUB_REF} --commit=${GITHUB_SHA}",
           "cwd": "{projectRoot}"
         }
       }
