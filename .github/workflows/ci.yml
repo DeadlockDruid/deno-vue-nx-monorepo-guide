@@ -68,7 +68,6 @@ jobs:
           main-branch-name: 'main'
 
       - run: |
-          echo "CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}"
           echo "NX_BASE=${{ env.NX_BASE }}"
           echo "NX_HEAD=${{ env.NX_HEAD }}"
 
